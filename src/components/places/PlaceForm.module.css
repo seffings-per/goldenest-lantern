@@ -202,6 +202,78 @@
   color: var(--gold-light);
 }
 
+/* ── Google Places search ── */
+.googleSearch {
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  font-size: 0.85rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.searchInput {
+  padding-left: 2.25rem !important;
+}
+
+.searchFilled {
+  position: absolute;
+  right: 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+}
+
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: rgba(3, 12, 40, 0.98);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius);
+  list-style: none;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+
+.suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.65rem 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.suggestion:last-child { border-bottom: none; }
+.suggestion:hover { background: rgba(59,130,246,0.12); }
+
+.sugMain {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--text-main);
+  letter-spacing: 0.02em;
+}
+
+.sugSub {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
 /* ── Best-for pill grid ── */
 .pillGrid {
   display: flex;

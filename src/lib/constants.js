@@ -12,6 +12,10 @@ export const CATEGORIES = [
   { id: 'outdoors', label: 'Outdoors & Walking', icon: '🌿' },
   { id: 'spiritual', label: 'Spiritual & Mystical', icon: '🔮' },
   { id: 'hotel', label: 'Hotel / Home Base', icon: '🏩' },
+  { id: 'fancy', label: 'Fancy', icon: '💎' },
+  { id: 'dive', label: 'Dive Bar', icon: '🍺' },
+  { id: 'nice', label: 'Nice Vibes', icon: '✨' },
+  { id: 'dresscode', label: 'Dress Code', icon: '👔' },
 ];
 
 export const BEST_FOR = [

@@ -10,6 +10,7 @@ export const EMPTY_PLACE = {
   address:      '',          // string  — street address
   neighborhood: '',          // string  — from NEIGHBORHOODS list
   website:      '',          // string  — optional URL
+  hours:        '',          // string  — opening hours (newline-separated, from Google or manual)
 
   // ── Classification ─────────────────────────────────────────
   categories:   [],          // string[] — ids from CATEGORIES

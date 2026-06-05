@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CATEGORIES, BEST_FOR, NEIGHBORHOODS, STATUS_META } from '../../lib/constants';
 import { EMPTY_PLACE } from '../../lib/placeSchema';
+import { loadMaps, MAPS_KEY_SET } from '../../lib/googlePlaces';
 import styles from './PlaceForm.module.css';
 
 export default function PlaceForm({ initial = {}, onSave, onClose }) {
@@ -50,6 +51,14 @@ export default function PlaceForm({ initial = {}, onSave, onClose }) {
 
           {/* ── Section: The Place ── */}
           <Section label="The Place" glyph="✦">
+            {MAPS_KEY_SET && (
+              <GooglePlaceSearch onSelect={data => {
+                if (data.name)    set('name',    data.name);
+                if (data.address) set('address', data.address);
+                if (data.website) set('website', data.website);
+                if (data.hours)   set('hours',   data.hours);
+              }} />
+            )}
             <div className={styles.row}>
               <FormField label="Name *">
                 <input
@@ -88,6 +97,15 @@ export default function PlaceForm({ initial = {}, onSave, onClose }) {
                 onChange={e => set('website', e.target.value)}
                 placeholder="https://..."
                 type="url"
+              />
+            </FormField>
+            <FormField label="Hours">
+              <textarea
+                className="form-textarea"
+                value={form.hours}
+                onChange={e => set('hours', e.target.value)}
+                placeholder={"Monday: 11:00 AM – 11:00 PM\nTuesday: …"}
+                rows={3}
               />
             </FormField>
           </Section>
@@ -193,6 +211,83 @@ export default function PlaceForm({ initial = {}, onSave, onClose }) {
         </div>
 
       </div>
+    </div>
+  );
+}
+
+function GooglePlaceSearch({ onSelect }) {
+  const [query, setQuery]           = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [mapsReady, setMapsReady]   = useState(false);
+  const [filled, setFilled]         = useState(false);
+  const mapNodeRef = useRef(null);
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    loadMaps().then(() => setMapsReady(true)).catch(() => {});
+  }, []);
+
+  const search = (text) => {
+    setQuery(text);
+    setFilled(false);
+    clearTimeout(debounceRef.current);
+    if (!mapsReady || text.length < 3) { setSuggestions([]); return; }
+    debounceRef.current = setTimeout(() => {
+      const svc = new window.google.maps.places.AutocompleteService();
+      svc.getPlacePredictions({
+        input: text,
+        types: ['establishment'],
+        location: new window.google.maps.LatLng(29.9511, -90.0715),
+        radius: 40000,
+      }, (preds, status) => {
+        setSuggestions(status === 'OK' ? preds.slice(0, 6) : []);
+      });
+    }, 300);
+  };
+
+  const pick = (placeId) => {
+    const svc = new window.google.maps.places.PlacesService(mapNodeRef.current);
+    svc.getDetails({
+      placeId,
+      fields: ['name', 'formatted_address', 'website', 'opening_hours'],
+    }, (place, status) => {
+      if (status !== 'OK') return;
+      onSelect({
+        name:    place.name || '',
+        address: place.formatted_address || '',
+        website: place.website || '',
+        hours:   place.opening_hours?.weekday_text?.join('\n') || '',
+      });
+      setSuggestions([]);
+      setQuery('');
+      setFilled(true);
+    });
+  };
+
+  return (
+    <div className={styles.googleSearch}>
+      <div ref={mapNodeRef} style={{ display: 'none' }} />
+      <label className="form-label">Search Google Places</label>
+      <div className={styles.searchWrap}>
+        <span className={styles.searchIcon}>🔍</span>
+        <input
+          className={`form-input ${styles.searchInput}`}
+          value={query}
+          onChange={e => search(e.target.value)}
+          placeholder="Type a place name to auto-fill address, hours & website…"
+        />
+        {filled && <span className={styles.searchFilled}>✓ Filled</span>}
+      </div>
+      {suggestions.length > 0 && (
+        <ul className={styles.suggestions}>
+          {suggestions.map(s => (
+            <li key={s.place_id} className={styles.suggestion} onMouseDown={() => pick(s.place_id)}>
+              <span className={styles.sugMain}>{s.structured_formatting.main_text}</span>
+              <span className={styles.sugSub}>{s.structured_formatting.secondary_text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

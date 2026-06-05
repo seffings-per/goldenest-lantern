@@ -78,8 +78,8 @@ export default function PlaceDetail({ place, onEdit, onDelete, onClose }) {
             </div>
           )}
 
-          {/* Address / website */}
-          {(place.address || place.website) && (
+          {/* Address / website / hours */}
+          {(place.address || place.website || place.hours) && (
             <div className={styles.section}>
               <SectionLabel>Find It</SectionLabel>
               {place.address && <p className={styles.address}>📍 {place.address}</p>}
@@ -92,6 +92,14 @@ export default function PlaceDetail({ place, onEdit, onDelete, onClose }) {
                 >
                   🔗 {place.website.replace(/^https?:\/\//, '')}
                 </a>
+              )}
+              {place.hours && (
+                <div className={styles.hours}>
+                  <p className={styles.hoursLabel}>🕐 Hours</p>
+                  {place.hours.split('\n').map((line, i) => (
+                    <p key={i} className={styles.hourLine}>{line}</p>
+                  ))}
+                </div>
               )}
             </div>
           )}
