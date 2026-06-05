@@ -1,8 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Component } from 'react';
 import { CATEGORIES, BEST_FOR, NEIGHBORHOODS, STATUS_META } from '../../lib/constants';
 import { EMPTY_PLACE } from '../../lib/placeSchema';
 import { loadMaps, MAPS_KEY_SET } from '../../lib/googlePlaces';
 import styles from './PlaceForm.module.css';
+
+class SearchErrorBoundary extends Component {
+  state = { crashed: false };
+  static getDerivedStateFromError() { return { crashed: true }; }
+  render() { return this.state.crashed ? null : this.props.children; }
+}
 
 export default function PlaceForm({ initial = {}, onSave, onClose }) {
   const [form, setForm] = useState({ ...EMPTY_PLACE, ...initial });
@@ -52,12 +58,14 @@ export default function PlaceForm({ initial = {}, onSave, onClose }) {
           {/* ── Section: The Place ── */}
           <Section label="The Place" glyph="✦">
             {MAPS_KEY_SET && (
-              <GooglePlaceSearch onSelect={data => {
-                if (data.name)    set('name',    data.name);
-                if (data.address) set('address', data.address);
-                if (data.website) set('website', data.website);
-                if (data.hours)   set('hours',   data.hours);
-              }} />
+              <SearchErrorBoundary>
+                <GooglePlaceSearch onSelect={data => {
+                  if (data.name)    set('name',    data.name);
+                  if (data.address) set('address', data.address);
+                  if (data.website) set('website', data.website);
+                  if (data.hours)   set('hours',   data.hours);
+                }} />
+              </SearchErrorBoundary>
             )}
             <div className={styles.row}>
               <FormField label="Name *">
