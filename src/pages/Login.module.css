@@ -1,0 +1,172 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 28%),
+              radial-gradient(circle at 80% 15%, rgba(107,91,255,0.12), transparent 22%);
+}
+
+.lanternGlow {
+  position: absolute;
+  width: 620px;
+  height: 620px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 222, 104, 0.22) 0%, transparent 68%);
+  pointer-events: none;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.1); opacity: 1; }
+}
+
+.card {
+  background: rgba(3, 18, 54, 0.96);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-card), 0 0 50px rgba(59,130,246,0.12);
+  animation: fadeIn 0.6s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.ornamentBottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.star,
+.moon {
+  font-size: 0.95rem;
+  color: transparent;
+  background: linear-gradient(90deg, var(--rainbow-red), var(--rainbow-orange), var(--rainbow-yellow), var(--rainbow-green), var(--rainbow-blue), var(--rainbow-indigo), var(--rainbow-violet));
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rainbow-yellow), transparent);
+  max-width: 60px;
+}
+
+.lanternIcon {
+  width: 5.5rem;
+  height: 5.5rem;
+  margin: 0 auto 1rem;
+  filter: drop-shadow(0 0 22px rgba(255, 214, 110, 0.65));
+  animation: float 3s ease-in-out infinite;
+}
+
+.lanternIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--rainbow-red), var(--rainbow-orange), var(--rainbow-yellow), var(--rainbow-green), var(--rainbow-blue), var(--rainbow-indigo), var(--rainbow-violet));
+  -webkit-background-clip: text;
+  color: transparent;
+  line-height: 1.3;
+}
+
+.subtitle {
+  font-family: var(--font-italic);
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rainbow-blue));
+}
+.divider::after {
+  background: linear-gradient(90deg, var(--rainbow-blue), transparent);
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.googleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--rainbow-glow);
+  color: var(--deep-blue);
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 2rem;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-shadow: 0 8px 30px rgba(58, 75, 219, 0.25);
+}
+
+.googleBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 34px rgba(93, 53, 247, 0.3);
+}
+
+@media (max-width: 480px) {
+  .card { padding: 2rem 1.5rem; }
+  .title { font-size: 1.3rem; }
+}

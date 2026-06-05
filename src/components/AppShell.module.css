@@ -1,0 +1,395 @@
+/* ── Shell layout ───────────────────────────────────────────── */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(3, 18, 54, 0.94);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+  backdrop-filter: blur(16px);
+}
+
+.headerInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.brandLantern {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 10px rgba(248, 212, 76, 0.45));
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brandTitle {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--rainbow-yellow);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.brandSub {
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Center page title */
+.pageTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--text-main);
+  text-transform: uppercase;
+}
+
+.pageTitleIcon { font-size: 1rem; }
+
+/* User area */
+.userArea {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  object-fit: cover;
+}
+
+.signOutBtn {
+  background: transparent;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 20px;
+  color: var(--text-dim);
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.signOutBtn:hover {
+  border-color: var(--rainbow-blue);
+  color: var(--text-main);
+}
+
+/* ── Workspace badge & invite popover ──────────────────────── */
+.workspaceBadge {
+  position: relative;
+}
+
+.membersBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 20px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.membersBtn:hover {
+  background: rgba(59, 130, 246, 0.18);
+  border-color: var(--rainbow-blue);
+}
+.membersIcon { font-size: 0.85rem; }
+.membersCount {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  color: var(--rainbow-blue);
+  letter-spacing: 0.06em;
+}
+
+.codePopover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: rgba(3, 18, 54, 0.96);
+  border: 1px solid rgba(59,130,246,0.28);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  min-width: 220px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(59,130,246,0.15);
+  z-index: 200;
+  animation: popIn 0.15s ease;
+}
+@keyframes popIn {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.codePopoverArrow {
+  position: absolute;
+  top: -5px; right: 16px;
+  width: 10px; height: 10px;
+  background: rgba(3, 18, 54, 0.96);
+  border-top: 1px solid rgba(59,130,246,0.28);
+  border-left: 1px solid rgba(59,130,246,0.28);
+  transform: rotate(45deg);
+}
+
+.codeLabel {
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rainbow-yellow);
+  margin-bottom: 0.4rem;
+}
+
+.codeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.codeValue {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  letter-spacing: 0.3em;
+  color: var(--gold-light);
+  text-shadow: 0 0 12px rgba(201,168,76,0.4);
+  flex: 1;
+}
+
+.copyBtn {
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 6px;
+  color: var(--gold);
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.copyBtn:hover { background: rgba(201,168,76,0.22); }
+
+.codeHint {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-style: italic;
+  line-height: 1.4;
+  margin-bottom: 0.65rem;
+}
+
+.memberList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  border-top: 1px solid rgba(201,168,76,0.12);
+  padding-top: 0.55rem;
+}
+
+.memberName {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+.popoverBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+}
+
+/* ── Main content area ──────────────────────────────────────── */
+.main {
+  flex: 1;
+  /* On mobile, leave room for bottom nav */
+  padding-bottom: 80px;
+}
+
+/* ── Bottom Nav (mobile default) ───────────────────────────── */
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(18, 8, 35, 0.95);
+  border-top: 1px solid rgba(201, 168, 76, 0.2);
+  backdrop-filter: blur(16px);
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  height: 64px;
+  padding: 0 0.5rem;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  flex: 1;
+  text-decoration: none;
+  color: var(--text-dim);
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.25rem;
+  border-top: 2px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.navItem:hover {
+  color: var(--text-muted);
+}
+
+.navItemActive {
+  color: var(--gold);
+  border-top-color: var(--gold);
+}
+
+.navItemActive .navIcon {
+  filter: drop-shadow(0 0 6px rgba(201, 168, 76, 0.6));
+  transform: translateY(-1px);
+}
+
+.navIcon {
+  font-size: 1.3rem;
+  transition: transform 0.2s, filter 0.2s;
+  display: block;
+}
+
+.navLabel {
+  display: block;
+}
+
+/* ── Desktop layout (≥ 768px) ───────────────────────────────── */
+@media (min-width: 768px) {
+  .shell {
+    flex-direction: row;
+  }
+
+  .header {
+    /* On desktop the header spans above the sidebar + main */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+  }
+
+  /* Push everything below the fixed header */
+  .shell::before {
+    content: '';
+    display: block;
+    height: 60px;
+    flex-shrink: 0;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    pointer-events: none;
+  }
+
+  /* Sidebar nav */
+  .nav {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    right: auto;
+    width: 88px;
+    height: auto;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 1.25rem 0;
+    border-top: none;
+    border-right: 1px solid rgba(201, 168, 76, 0.2);
+    background: rgba(18, 8, 35, 0.88);
+  }
+
+  .navItem {
+    border-top: none;
+    border-right: 2px solid transparent;
+    border-left: 2px solid transparent;
+    padding: 0.85rem 0.5rem;
+    width: 100%;
+    font-size: 0.55rem;
+  }
+
+  .navItemActive {
+    color: var(--gold);
+    border-top: none;
+    border-right-color: transparent;
+    border-left-color: var(--gold);
+    background: rgba(201, 168, 76, 0.06);
+  }
+
+  .navIcon { font-size: 1.4rem; }
+
+  /* Main content offset for sidebar */
+  .main {
+    margin-top: 60px;
+    margin-left: 88px;
+    padding-bottom: 2rem;
+    width: 100%;
+  }
+
+  /* Hide page title on mobile (too cramped), show on desktop */
+  .pageTitle { display: flex; }
+}
+
+@media (max-width: 767px) {
+  .pageTitle { display: none; }
+  .brandSub  { display: none; }
+
+  .main {
+    margin-top: 60px;
+  }
+}
+
+@media (max-width: 380px) {
+  .brandTitle { font-size: 0.65rem; }
+  .signOutBtn { display: none; }
+}

@@ -1,0 +1,179 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+.glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+  pointer-events: none;
+  animation: pulse 4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { transform:scale(1); opacity:0.6; }
+  50%      { transform:scale(1.1); opacity:1; }
+}
+
+.card {
+  background: rgba(45,27,78,0.92);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 24px;
+  padding: 2.5rem 2.25rem;
+  max-width: 460px; width: 100%;
+  text-align: center;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 60px rgba(201,168,76,0.12), 0 24px 64px rgba(0,0,0,0.6);
+  animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.ornament {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.75rem; margin-bottom: 1.25rem;
+}
+.star  { color: var(--gold); font-size: 0.8rem; }
+.moon  { color: var(--gold); font-size: 1rem; }
+.line  {
+  flex: 1; height: 1px; max-width: 50px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.lantern {
+  font-size: 3rem; margin-bottom: 0.75rem;
+  filter: drop-shadow(0 0 12px rgba(201,168,76,0.5));
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.4rem; color: var(--gold);
+  text-shadow: 0 0 20px rgba(201,168,76,0.4);
+  margin-bottom: 1.25rem; line-height: 1.3;
+}
+
+.greeting {
+  display: flex; align-items: center; gap: 0.85rem;
+  text-align: left;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.3);
+  flex-shrink: 0;
+}
+
+.greetingText {
+  font-family: var(--font-body); font-size: 0.92rem;
+  color: var(--text-muted); line-height: 1.5;
+}
+.greetingText strong { color: var(--text-main); }
+
+.divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  font-family: var(--font-heading); font-size: 0.65rem;
+  letter-spacing: 0.18em; color: var(--gold-dim);
+  margin-bottom: 1.25rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim));
+}
+.divider::after {
+  background: linear-gradient(90deg, var(--gold-dim), transparent);
+}
+
+/* Choice buttons */
+.choices {
+  display: flex; flex-direction: column; gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.choiceBtn {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 0.2rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  cursor: pointer; text-align: left;
+  transition: all 0.2s;
+}
+.choiceBtn:hover {
+  background: rgba(201,168,76,0.08);
+  border-color: var(--gold);
+  box-shadow: 0 0 16px rgba(201,168,76,0.15);
+}
+
+.choiceIcon { font-size: 1.4rem; margin-bottom: 0.15rem; }
+
+.choiceLabel {
+  font-family: var(--font-heading);
+  font-size: 0.85rem; letter-spacing: 0.06em;
+  color: var(--gold-light);
+}
+
+.choiceSub {
+  font-family: var(--font-body);
+  font-size: 0.8rem; color: var(--text-dim);
+  font-style: italic; line-height: 1.4;
+}
+
+/* Mode panel */
+.modePanel {
+  display: flex; flex-direction: column; gap: 0.85rem;
+  text-align: left;
+}
+
+.modeDesc {
+  font-family: var(--font-italic);
+  font-size: 0.9rem; color: var(--text-muted);
+  font-style: italic; line-height: 1.55;
+}
+
+.codeInput {
+  text-align: center;
+  font-family: var(--font-heading) !important;
+  font-size: 1.5rem !important;
+  letter-spacing: 0.35em !important;
+  color: var(--gold) !important;
+}
+
+.error {
+  font-family: var(--font-body);
+  font-size: 0.88rem; color: #e06070;
+}
+
+.btnRow {
+  display: flex; justify-content: flex-end; gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.signOut {
+  background: transparent; border: none;
+  font-family: var(--font-heading); font-size: 0.65rem;
+  letter-spacing: 0.1em; color: var(--text-dim);
+  cursor: pointer; margin-top: 1.25rem;
+  transition: color 0.15s;
+}
+.signOut:hover { color: var(--text-muted); }
+
+@media (max-width: 480px) {
+  .card { padding: 2rem 1.5rem; }
+  .title { font-size: 1.2rem; }
+}

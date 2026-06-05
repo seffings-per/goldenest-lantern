@@ -1,0 +1,49 @@
+// ╔══════════════════════════════════════════════════════════════╗
+// ║      THE GOLDENEST LANTERN — Firestore Security Rules        ║
+// ║                                                              ║
+// ║  Paste these into Firebase Console →                         ║
+// ║  Firestore Database → Rules → and click Publish.             ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── User profiles ─────────────────────────────────────────
+    // Each user can only read/write their own profile
+    match /userProfiles/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ── Workspaces ────────────────────────────────────────────
+    // A user can read a workspace if they are a member.
+    // A user can create a workspace (they'll add themselves as member).
+    // A user can update a workspace if they are already a member
+    // (covers joining — the join function adds them to members first,
+    //  but we also allow the write if the code matches so new members
+    //  can add themselves).
+    match /workspaces/{workspaceId} {
+      allow read: if request.auth != null
+        && request.auth.uid in resource.data.members;
+
+      allow create: if request.auth != null
+        && request.auth.uid in request.resource.data.members;
+
+      allow update: if request.auth != null && (
+        // existing member editing workspace data
+        request.auth.uid in resource.data.members
+        ||
+        // new member joining via invite code
+        (request.resource.data.inviteCode == resource.data.inviteCode
+         && request.auth.uid in request.resource.data.members)
+      );
+
+      // ── Subcollections: places, people, trips ──────────────
+      // Only workspace members can read or write
+      match /{subcollection}/{docId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid in get(/databases/$(database)/documents/workspaces/$(workspaceId)).data.members;
+      }
+    }
+  }
+}
