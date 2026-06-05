@@ -35,8 +35,10 @@
 }
 
 .brandLantern {
-  font-size: 1.5rem;
-  filter: drop-shadow(0 0 10px rgba(248, 212, 76, 0.45));
+  width: 28px;
+  height: 35px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(248, 212, 76, 0.55));
 }
 
 .brandText {
@@ -48,9 +50,12 @@
 .brandTitle {
   font-family: var(--font-display);
   font-size: 0.8rem;
-  color: var(--rainbow-yellow);
   letter-spacing: 0.04em;
   white-space: nowrap;
+  background: linear-gradient(90deg, var(--rainbow-red), var(--rainbow-orange), var(--rainbow-yellow), var(--rainbow-green), var(--rainbow-blue), var(--rainbow-indigo), var(--rainbow-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .brandSub {
@@ -130,7 +135,17 @@
   background: rgba(59, 130, 246, 0.18);
   border-color: var(--rainbow-blue);
 }
-.membersIcon { font-size: 0.85rem; }
+.membersIcon {
+  width: 18px;
+  height: 22px;
+  filter: drop-shadow(0 0 4px rgba(255,214,110,0.5));
+}
+
+.navLanternIcon {
+  width: 1.4rem;
+  height: 1.75rem;
+  filter: drop-shadow(0 0 6px rgba(255,214,110,0.4));
+}
 .membersCount {
   font-family: var(--font-heading);
   font-size: 0.65rem;

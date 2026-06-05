@@ -4,6 +4,7 @@ import { useWorkspace } from './context/WorkspaceContext';
 import Login from './pages/Login';
 import WorkspaceSetup from './pages/WorkspaceSetup';
 import AppShell from './components/AppShell';
+import LanternIcon from './components/LanternIcon';
 import OracleBoard from './pages/OracleBoard';
 import Places from './pages/Places';
 import People from './pages/People';
@@ -44,7 +45,7 @@ function AppLoading() {
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', gap: '1rem'
     }}>
-      <div style={{ fontSize: '3rem', animation: 'float 2s ease-in-out infinite' }}>🏮</div>
+      <LanternIcon style={{ width: '5rem', height: '6.25rem', filter: 'drop-shadow(0 0 18px rgba(255,214,110,0.65))', animation: 'float 2s ease-in-out infinite' }} />
       <p style={{
         fontFamily: 'var(--font-heading)', color: 'var(--gold)',
         letterSpacing: '0.15em', fontSize: '0.8rem'

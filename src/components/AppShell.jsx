@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWorkspace } from '../context/WorkspaceContext';
+import LanternIcon from './LanternIcon';
 import styles from './AppShell.module.css';
 
 const NAV_ITEMS = [
-  { path: '/',        label: 'Oracle Board', icon: '🏮', title: 'The Oracle' },
-  { path: '/places',  label: 'Places',       icon: '📍', title: 'The Map' },
+  { path: '/',        label: 'Oracle Board', icon: null,  title: 'The Oracle' },
+  { path: '/places',  label: 'Places',       icon: '📍',  title: 'The Map' },
   { path: '/people',  label: 'People',       icon: '👁️', title: 'The Court' },
-  { path: '/trips',   label: 'Trips',        icon: '🌙', title: 'The Journey' },
+  { path: '/trips',   label: 'Trips',        icon: '🌙',  title: 'The Journey' },
 ];
 
 export default function AppShell({ children }) {
@@ -36,7 +37,7 @@ export default function AppShell({ children }) {
         <div className={styles.headerInner}>
 
           <div className={styles.brand}>
-            <span className={styles.brandLantern}>🏮</span>
+            <LanternIcon className={styles.brandLantern} />
             <div className={styles.brandText}>
               <span className={styles.brandTitle}>The Goldenest Lantern</span>
               <span className={styles.brandSub}>New Orleans Oracle</span>
@@ -59,7 +60,7 @@ export default function AppShell({ children }) {
                   onClick={() => setShowCode(s => !s)}
                   title="Lantern members & invite code"
                 >
-                  <span className={styles.membersIcon}>🏮</span>
+                  <LanternIcon className={styles.membersIcon} />
                   <span className={styles.membersCount}>{memberCount}</span>
                 </button>
 
@@ -122,7 +123,11 @@ export default function AppShell({ children }) {
               `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
             }
           >
-            <span className={styles.navIcon}>{item.icon}</span>
+            <span className={styles.navIcon}>
+              {item.icon === null
+                ? <LanternIcon className={styles.navLanternIcon} />
+                : item.icon}
+            </span>
             <span className={styles.navLabel}>{item.label}</span>
           </NavLink>
         ))}

@@ -38,17 +38,29 @@
   display: flex; align-items: center; justify-content: center;
   gap: 0.75rem; margin-bottom: 1.25rem;
 }
-.star  { color: var(--gold); font-size: 0.8rem; }
-.moon  { color: var(--gold); font-size: 1rem; }
+.star,
+.moon {
+  font-size: 0.95rem;
+  color: transparent;
+  background: linear-gradient(90deg, var(--rainbow-red), var(--rainbow-orange), var(--rainbow-yellow), var(--rainbow-green), var(--rainbow-blue), var(--rainbow-indigo), var(--rainbow-violet));
+  background-clip: text;
+  -webkit-background-clip: text;
+}
 .line  {
   flex: 1; height: 1px; max-width: 50px;
   background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
 }
 
 .lantern {
-  font-size: 3rem; margin-bottom: 0.75rem;
-  filter: drop-shadow(0 0 12px rgba(201,168,76,0.5));
+  width: 5.5rem; height: 5.5rem;
+  margin: 0 auto 0.75rem;
+  filter: drop-shadow(0 0 22px rgba(255, 214, 110, 0.65));
   animation: float 3s ease-in-out infinite;
+}
+
+.lanternIcon {
+  width: 100%;
+  height: 100%;
 }
 @keyframes float {
   0%,100% { transform: translateY(0); }
@@ -57,9 +69,13 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: 1.4rem; color: var(--gold);
-  text-shadow: 0 0 20px rgba(201,168,76,0.4);
-  margin-bottom: 1.25rem; line-height: 1.3;
+  font-size: 1.4rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.3;
+  background: linear-gradient(135deg, var(--rainbow-red), var(--rainbow-orange), var(--rainbow-yellow), var(--rainbow-green), var(--rainbow-blue), var(--rainbow-indigo), var(--rainbow-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .greeting {
@@ -120,7 +136,12 @@
   box-shadow: 0 0 16px rgba(201,168,76,0.15);
 }
 
-.choiceIcon { font-size: 1.4rem; margin-bottom: 0.15rem; }
+.choiceIcon {
+  width: 2rem;
+  height: 2.5rem;
+  margin-bottom: 0.15rem;
+  filter: drop-shadow(0 0 8px rgba(255,214,110,0.5));
+}
 
 .choiceLabel {
   font-family: var(--font-heading);

@@ -5,6 +5,7 @@ import { CATEGORIES, STATUS_META } from '../lib/constants';
 import PlaceCard from '../components/places/PlaceCard';
 import PlaceForm from '../components/places/PlaceForm';
 import PlaceDetail from '../components/places/PlaceDetail';
+import LanternIcon from '../components/LanternIcon';
 import styles from './Places.module.css';
 
 const ALL = 'all';
@@ -137,7 +138,7 @@ export default function Places() {
       {/* ── Content ── */}
       {loading ? (
         <div className={styles.loading}>
-          <span className={styles.loadingLantern}>🏮</span>
+          <LanternIcon className={styles.loadingLantern} />
           <p>Reading the cards…</p>
         </div>
       ) : filtered.length === 0 ? (

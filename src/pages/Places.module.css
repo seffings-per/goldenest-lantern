@@ -177,9 +177,10 @@
 }
 
 .loadingLantern {
-  font-size: 2.5rem;
+  width: 4.5rem;
+  height: 5.6rem;
   animation: float 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 12px rgba(201,168,76,0.5));
+  filter: drop-shadow(0 0 18px rgba(255,214,110,0.65));
 }
 
 @keyframes float {

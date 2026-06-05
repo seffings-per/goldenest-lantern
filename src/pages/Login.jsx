@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext';
+import LanternIcon from '../components/LanternIcon';
 import styles from './Login.module.css';
 
 export default function Login() {
@@ -16,7 +17,7 @@ export default function Login() {
           <span className={styles.star}>✦</span>
         </div>
 
-        <div className={styles.lanternIcon}><LanternIconSvg /></div>
+        <div className={styles.lanternIcon}><LanternIcon /></div>
 
         <h1 className={styles.title}>The Goldenest Lantern</h1>
         <p className={styles.subtitle}>
@@ -46,32 +47,6 @@ export default function Login() {
         </div>
       </div>
     </div>
-  );
-}
-
-function LanternIconSvg() {
-  return (
-    <svg viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="glass" x1="60" y1="25" x2="60" y2="115" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FFF9CC" stopOpacity="0.7" />
-          <stop offset="1" stopColor="#5C94E0" stopOpacity="0.2" />
-        </linearGradient>
-        <radialGradient id="flame" cx="60" cy="72" r="26" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#FFF29D" />
-          <stop offset="0.35" stopColor="#FFD14D" />
-          <stop offset="1" stopColor="#F28F3B" />
-        </radialGradient>
-      </defs>
-      <path d="M36 18h48v18H36z" fill="#17294D" />
-      <path d="M39 14c0-4 3.6-8 8-8h26c4.4 0 8 4 8 8v6H39v-6Z" fill="#17294D" />
-      <path d="M38 20c0-5.5 4.5-10 10-10h24c5.5 0 10 4.5 10 10" fill="none" stroke="#1A274F" strokeWidth="6" strokeLinecap="round" />
-      <path d="M25 38c0-10 8-18 18-18h36c10 0 18 8 18 18v82c0 10-8 18-18 18H43c-10 0-18-8-18-18V38Z" fill="url(#glass)" stroke="#1A274F" strokeWidth="6" />
-      <path d="M38 98h44v10H38z" fill="#1A274F" />
-      <path d="M44 46h6v54h-6zm14 0h6v54h-6zm14 0h6v54h-6z" fill="#1A274F" />
-      <path d="M52 62c0-7 5.5-14 12-14s12 7 12 14c0 9-8.5 16-10.5 22-1.5 5.5 1.5 9.5 3.5 11.5 2 2 0.5 4.5-2.5 4.5-3 0-4.5-1.5-5.5-4.5-1-3-2.5-6.5-2.5-10 0-5-4-8-4-12Z" fill="url(#flame)" />
-      <path d="M25 40c0 6.5 8 12 18 12s18-5.5 18-12" fill="rgba(255,255,255,0.08)" />
-    </svg>
   );
 }
 

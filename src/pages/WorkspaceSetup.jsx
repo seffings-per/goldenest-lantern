@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWorkspace } from '../context/WorkspaceContext';
+import LanternIcon from '../components/LanternIcon';
 import styles from './WorkspaceSetup.module.css';
 
 export default function WorkspaceSetup() {
@@ -36,7 +37,7 @@ export default function WorkspaceSetup() {
           <span className={styles.star}>✦</span>
         </div>
 
-        <div className={styles.lantern}>🏮</div>
+        <div className={styles.lantern}><LanternIcon className={styles.lanternIcon} /></div>
         <h1 className={styles.title}>The Goldenest Lantern</h1>
 
         <div className={styles.greeting}>
@@ -55,7 +56,7 @@ export default function WorkspaceSetup() {
         {!mode && (
           <div className={styles.choices}>
             <button className={styles.choiceBtn} onClick={() => setMode('create')}>
-              <span className={styles.choiceIcon}>🏮</span>
+              <LanternIcon className={styles.choiceIcon} />
               <span className={styles.choiceLabel}>Create a New Lantern</span>
               <span className={styles.choiceSub}>Start fresh — you'll get an invite code to share with Chris</span>
             </button>

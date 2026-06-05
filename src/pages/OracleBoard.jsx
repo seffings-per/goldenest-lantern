@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../context/WorkspaceContext';
 import { getPlaces, getPeople, getTrips } from '../lib/db';
 import { CATEGORIES, STATUS_META } from '../lib/constants';
+import LanternIcon from '../components/LanternIcon';
 import styles from './OracleBoard.module.css';
 
 export default function OracleBoard() {
@@ -79,7 +80,7 @@ export default function OracleBoard() {
   if (loading) {
     return (
       <div className={styles.loading}>
-        <span className={styles.loadingLantern}>🏮</span>
+        <LanternIcon className={styles.loadingLantern} />
         <p>The lantern is reading the cards…</p>
       </div>
     );
@@ -100,7 +101,7 @@ export default function OracleBoard() {
               : `${places.length} places · ${people.length} people · ${trips.length} trips`}
           </p>
         </div>
-        <div className={styles.heroLantern}>🏮</div>
+        <LanternIcon className={styles.heroLantern} />
       </div>
 
       {isEmpty ? (
