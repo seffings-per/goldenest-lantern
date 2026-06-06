@@ -5,6 +5,7 @@ import { CATEGORIES, STATUS_META } from '../lib/constants';
 import PlaceCard from '../components/places/PlaceCard';
 import PlaceForm from '../components/places/PlaceForm';
 import PlaceDetail from '../components/places/PlaceDetail';
+import PlacesMap from '../components/places/PlacesMap';
 import LanternIcon from '../components/LanternIcon';
 import styles from './Places.module.css';
 
@@ -15,11 +16,12 @@ export default function Places() {
   const [places, setPlaces]         = useState([]);
   const [loading, setLoading]       = useState(true);
   const [showForm, setShowForm]     = useState(false);
-  const [editing, setEditing]       = useState(null);   // place obj being edited
-  const [viewing, setViewing]       = useState(null);   // place obj in detail view
+  const [editing, setEditing]       = useState(null);
+  const [viewing, setViewing]       = useState(null);
   const [search, setSearch]         = useState('');
   const [filterStatus, setFilterStatus] = useState(ALL);
   const [filterCat, setFilterCat]   = useState(ALL);
+  const [viewMode, setViewMode]     = useState('list'); // 'list' | 'map'
 
   // ── Load ──────────────────────────────────────────────────
   const load = async () => {
@@ -47,6 +49,12 @@ export default function Places() {
     await deletePlace(workspaceId, viewing.id);
     setViewing(null);
     await load();
+  };
+
+  // Save geocoded location without a full reload
+  const handleLocationUpdate = async (placeId, location) => {
+    await updatePlace(workspaceId, placeId, { location });
+    setPlaces(prev => prev.map(p => p.id === placeId ? { ...p, location } : p));
   };
 
   // ── Filter + search ───────────────────────────────────────
@@ -109,7 +117,7 @@ export default function Places() {
         </div>
       </div>
 
-      {/* ── Search + category filter ── */}
+      {/* ── Search + category filter + view toggle ── */}
       <div className={styles.toolbar}>
         <div className={styles.searchWrap}>
           <span className={styles.searchIcon}>✦</span>
@@ -133,6 +141,20 @@ export default function Places() {
             <option key={c.id} value={c.id}>{c.icon} {c.label}</option>
           ))}
         </select>
+        <div className={styles.viewToggle}>
+          <button
+            className={`${styles.viewBtn} ${viewMode === 'list' ? styles.viewBtnActive : ''}`}
+            onClick={() => setViewMode('list')}
+          >
+            ☰ List
+          </button>
+          <button
+            className={`${styles.viewBtn} ${viewMode === 'map' ? styles.viewBtnActive : ''}`}
+            onClick={() => setViewMode('map')}
+          >
+            🗺 Map
+          </button>
+        </div>
       </div>
 
       {/* ── Content ── */}
@@ -141,6 +163,12 @@ export default function Places() {
           <LanternIcon className={styles.loadingLantern} />
           <p>Reading the cards…</p>
         </div>
+      ) : viewMode === 'map' ? (
+        <PlacesMap
+          places={filtered}
+          onPlaceClick={setViewing}
+          onLocationUpdate={handleLocationUpdate}
+        />
       ) : filtered.length === 0 ? (
         <div className={styles.empty}>
           <span className={styles.emptyIcon}>🔮</span>

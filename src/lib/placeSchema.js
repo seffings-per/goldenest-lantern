@@ -11,6 +11,7 @@ export const EMPTY_PLACE = {
   neighborhood: '',          // string  — from NEIGHBORHOODS list
   website:      '',          // string  — optional URL
   hours:        '',          // string  — opening hours (newline-separated, from Google or manual)
+  location:     null,        // { lat, lng } — coordinates, set from Google Places or geocoder
 
   // ── Classification ─────────────────────────────────────────
   categories:   [],          // string[] — ids from CATEGORIES

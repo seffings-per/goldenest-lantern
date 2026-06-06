@@ -1,33 +1,33 @@
 export const CATEGORIES = [
-  { id: 'bars', label: 'Bars & Cocktails', icon: '🍸' },
-  { id: 'drag', label: 'Drag & Nightlife', icon: '💫' },
-  { id: 'brunch', label: 'Brunch', icon: '🥂' },
-  { id: 'dinner', label: 'Dinner', icon: '🕯️' },
-  { id: 'latenight', label: 'Late Night Eats', icon: '🌙' },
-  { id: 'cheap', label: 'Cheap Eats', icon: '🎲' },
-  { id: 'coffee', label: 'Coffee & Bakeries', icon: '☕' },
-  { id: 'music', label: 'Live Music', icon: '🎶' },
-  { id: 'art', label: 'Art & Culture', icon: '🎨' },
-  { id: 'shopping', label: 'Shopping', icon: '🛍️' },
-  { id: 'outdoors', label: 'Outdoors & Walking', icon: '🌿' },
+  { id: 'art',       label: 'Art & Culture',       icon: '🎨' },
+  { id: 'bars',      label: 'Bars & Cocktails',     icon: '🍸' },
+  { id: 'brunch',    label: 'Brunch',               icon: '🥂' },
+  { id: 'cheap',     label: 'Cheap Eats',           icon: '🎲' },
+  { id: 'coffee',    label: 'Coffee & Bakeries',    icon: '☕' },
+  { id: 'dinner',    label: 'Dinner',               icon: '🕯️' },
+  { id: 'dive',      label: 'Dive Bar',             icon: '🍺' },
+  { id: 'drag',      label: 'Drag & Nightlife',     icon: '💫' },
+  { id: 'dresscode', label: 'Dress Code',           icon: '👔' },
+  { id: 'fancy',     label: 'Fancy',                icon: '💎' },
+  { id: 'hotel',     label: 'Hotel / Home Base',    icon: '🏩' },
+  { id: 'latenight', label: 'Late Night Eats',      icon: '🌙' },
+  { id: 'music',     label: 'Live Music',           icon: '🎶' },
+  { id: 'lunch',     label: 'Lunch',                icon: '🥪' },
+  { id: 'nice',      label: 'Nice Vibes',           icon: '✨' },
+  { id: 'outdoors',  label: 'Outdoors & Walking',   icon: '🌿' },
+  { id: 'shopping',  label: 'Shopping',             icon: '🛍️' },
   { id: 'spiritual', label: 'Spiritual & Mystical', icon: '🔮' },
-  { id: 'hotel', label: 'Hotel / Home Base', icon: '🏩' },
-  { id: 'lunch', label: 'Lunch', icon: '🥪' },
-  { id: 'fancy', label: 'Fancy', icon: '💎' },
-  { id: 'dive', label: 'Dive Bar', icon: '🍺' },
-  { id: 'nice', label: 'Nice Vibes', icon: '✨' },
-  { id: 'dresscode', label: 'Dress Code', icon: '👔' },
 ];
 
 export const BEST_FOR = [
-  'Date Night', 'Just Us', 'Large Group', 'Solo', 'Late Night',
-  'Sunday Brunch', 'Rainy Day', 'Special Occasion', 'Quick Stop',
+  'Date Night', 'Just Us', 'Large Group', 'Late Night', 'Quick Stop',
+  'Rainy Day', 'Solo', 'Special Occasion', 'Sunday Brunch',
 ];
 
 export const NEIGHBORHOODS = [
-  'French Quarter', 'Marigny', 'Bywater', 'Garden District',
-  'Uptown', 'Mid-City', 'Treme', 'CBD / Warehouse', 'Algiers',
-  'Frenchmen Street', 'Magazine Street', 'Other',
+  'Algiers', 'Bywater', 'CBD / Warehouse', 'French Quarter',
+  'Frenchmen Street', 'Garden District', 'Magazine Street', 'Marigny',
+  'Mid-City', 'Treme', 'Uptown', 'Other',
 ];
 
 export const PLACE_STATUS = {
@@ -49,6 +49,6 @@ export const STATUS_META = {
 };
 
 export const TRIP_VIBES = [
-  'Full Send Nightlife', 'Chill & Eat', 'Culture & Art',
-  'Romantic Getaway', 'Festival Mode', 'Mix of Everything',
+  'Chill & Eat', 'Culture & Art', 'Festival Mode',
+  'Full Send Nightlife', 'Mix of Everything', 'Romantic Getaway',
 ];

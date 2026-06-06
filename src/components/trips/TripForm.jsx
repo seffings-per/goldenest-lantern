@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TRIP_VIBES } from '../../lib/constants';
+import { generateItinerary, swapSuggestion } from '../../lib/itinerary';
 import styles from './TripForm.module.css';
 
 const EMPTY_TRIP = {
@@ -20,6 +21,7 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
 
   const set = (field, val) => setForm(f => ({ ...f, [field]: val }));
 
+  // Rebuild day list when date range changes
   useEffect(() => {
     if (!form.startDate || !form.endDate) return;
     const start = new Date(form.startDate);
@@ -36,13 +38,14 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
       dayNum++;
     }
     setForm(f => ({ ...f, itinerary: days }));
-  }, [form.startDate, form.endDate]);
+  }, [form.startDate, form.endDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ── Slot helpers ──────────────────────────────────────────
   const addSlot = (dayIdx) => {
     setForm(f => ({
       ...f,
       itinerary: f.itinerary.map((d, i) =>
-        i === dayIdx ? { ...d, slots: [...d.slots, { placeId:'', placeName:'', notes:'', time:'' }] } : d
+        i === dayIdx ? { ...d, slots: [...d.slots, { placeId:'', placeName:'', notes:'', time:'', suggested: false }] } : d
       )
     }));
   };
@@ -68,6 +71,7 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
     }));
   };
 
+  // Selecting a place manually clears the suggested flag
   const selectPlace = (dayIdx, slotIdx, placeId) => {
     const place = places.find(p => p.id === placeId);
     setForm(f => ({
@@ -79,7 +83,8 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
             si !== slotIdx ? s : {
               ...s,
               placeId,
-              placeName: placeId === '__custom__' ? s.placeName : (place?.name || '')
+              placeName: placeId === '__custom__' ? s.placeName : (place?.name || ''),
+              suggested: false,
             }
           )
         }
@@ -87,6 +92,16 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
     }));
   };
 
+  // ── Itinerary suggestion ──────────────────────────────────
+  const handleSuggest = () => {
+    setForm(f => ({ ...f, itinerary: generateItinerary(places, f) }));
+  };
+
+  const handleSwap = (dayIdx, slotIdx) => {
+    setForm(f => swapSuggestion(places, f, dayIdx, slotIdx));
+  };
+
+  // ── Save ──────────────────────────────────────────────────
   const handleSave = async () => {
     if (!form.label.trim()) { setError('A trip name is required.'); return; }
     if (!form.startDate)    { setError('A start date is required.'); return; }
@@ -100,10 +115,12 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
     }
   };
 
-  const isEdit = !!initial.id;
+  const isEdit  = !!initial.id;
   const fmtDate = (d) => d
     ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
     : '';
+
+  const hasDays = form.itinerary.length > 0;
 
   return (
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
@@ -154,8 +171,18 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
             </Field>
           </Sec>
 
-          {form.itinerary.length > 0 && (
+          {hasDays && (
             <Sec label="Day by Day" glyph="🔮">
+
+              {/* ── Suggest button ── */}
+              {places.length > 0 && (
+                <button type="button" className={styles.suggestBtn} onClick={handleSuggest}>
+                  <span className={styles.suggestGlyph}>✨</span>
+                  Suggest Itinerary
+                  <span className={styles.suggestHint}>fills empty slots · keeps your picks</span>
+                </button>
+              )}
+
               {form.itinerary.map((day, di) => (
                 <div key={day.date} className={styles.dayBlock}>
                   <div className={styles.dayHeader}>
@@ -164,7 +191,10 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
                   </div>
 
                   {day.slots.map((slot, si) => (
-                    <div key={si} className={styles.slot}>
+                    <div key={si} className={`${styles.slot} ${slot.suggested ? styles.slotSuggested : ''}`}>
+                      {slot.suggested && (
+                        <div className={styles.suggestedBadge}>✦ suggested — swap or keep</div>
+                      )}
                       <div className={styles.slotRow}>
                         <input className={`form-input ${styles.slotTime}`}
                           value={slot.time}
@@ -179,6 +209,13 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
                           ))}
                           <option value="__custom__">+ Custom / unlisted</option>
                         </select>
+                        {slot.suggested && (
+                          <button type="button" className={styles.swapBtn}
+                            title="Try a different place"
+                            onClick={() => handleSwap(di, si)}>
+                            🔄
+                          </button>
+                        )}
                         <button className={styles.removeSlot}
                           onClick={() => removeSlot(di, si)}>✕</button>
                       </div>

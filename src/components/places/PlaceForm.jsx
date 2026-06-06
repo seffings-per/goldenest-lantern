@@ -60,10 +60,11 @@ export default function PlaceForm({ initial = {}, onSave, onClose }) {
             {MAPS_KEY_SET && (
               <SearchErrorBoundary>
                 <GooglePlaceSearch onSelect={data => {
-                  if (data.name)    set('name',    data.name);
-                  if (data.address) set('address', data.address);
-                  if (data.website) set('website', data.website);
-                  if (data.hours)   set('hours',   data.hours);
+                  if (data.name)     set('name',     data.name);
+                  if (data.address)  set('address',  data.address);
+                  if (data.website)  set('website',  data.website);
+                  if (data.hours)    set('hours',    data.hours);
+                  if (data.location) set('location', data.location);
                 }} />
               </SearchErrorBoundary>
             )}
@@ -261,13 +262,14 @@ function GooglePlaceSearch({ onSelect }) {
     try {
       const place = suggestion.placePrediction.toPlace();
       await place.fetchFields({
-        fields: ['displayName', 'formattedAddress', 'websiteURI', 'regularOpeningHours'],
+        fields: ['displayName', 'formattedAddress', 'websiteURI', 'regularOpeningHours', 'location'],
       });
       onSelect({
-        name:    place.displayName || '',
-        address: place.formattedAddress || '',
-        website: place.websiteURI || '',
-        hours:   place.regularOpeningHours?.weekdayDescriptions?.join('\n') || '',
+        name:     place.displayName || '',
+        address:  place.formattedAddress || '',
+        website:  place.websiteURI || '',
+        hours:    place.regularOpeningHours?.weekdayDescriptions?.join('\n') || '',
+        location: place.location ? { lat: place.location.lat(), lng: place.location.lng() } : null,
       });
       setSuggestions([]);
       setQuery('');
