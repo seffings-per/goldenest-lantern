@@ -216,6 +216,78 @@
   flex-shrink:0; margin-left:auto;
 }
 
+/* ── Clickable & expanded slots ── */
+.detailSlotExpanded {
+  display:block !important;
+  padding:0.5rem 0.6rem !important;
+  background:rgba(201,168,76,0.05);
+  border-radius:var(--radius);
+  border-bottom:1px solid rgba(201,168,76,0.18) !important;
+}
+
+.slotClickable {
+  display:flex; align-items:baseline; gap:0.5rem;
+  width:100%; cursor:pointer;
+  border-radius:4px; padding:0.1rem 0.2rem;
+  transition:background 0.15s;
+}
+.slotClickable:hover { background:rgba(201,168,76,0.06); }
+.slotClickable:hover .slotEditHint { opacity:0.45; }
+
+.slotEditHint {
+  font-size:0.7rem; color:var(--gold);
+  opacity:0; margin-left:auto;
+  flex-shrink:0; transition:opacity 0.15s;
+}
+
+.slotEditor { display:flex; flex-direction:column; gap:0.4rem; }
+
+.slotEditorTop {
+  display:flex; align-items:center; gap:0.4rem;
+}
+
+.slotEditorSelect {
+  flex:1;
+  font-size:0.82rem !important;
+  padding:0.3rem 0.5rem !important;
+}
+
+.slotEditorCancel {
+  background:transparent; border:none;
+  color:var(--text-dim); cursor:pointer;
+  font-size:0.88rem; padding:0.15rem 0.35rem;
+  border-radius:4px; flex-shrink:0;
+  transition:color 0.15s;
+}
+.slotEditorCancel:hover { color:var(--text-main); }
+
+.slotEditorActions { display:flex; gap:0.45rem; }
+
+.slotEditorBtn {
+  flex:1; padding:0.28rem 0.5rem;
+  background:transparent;
+  border:1px solid rgba(201,168,76,0.22);
+  border-radius:var(--radius);
+  color:var(--gold-light);
+  font-family:var(--font-heading); font-size:0.63rem;
+  letter-spacing:0.05em; cursor:pointer;
+  transition:all 0.15s;
+}
+.slotEditorBtn:hover {
+  background:rgba(201,168,76,0.1);
+  border-color:var(--gold);
+}
+
+.slotEditorDelete {
+  border-color:rgba(224,96,112,0.28);
+  color:rgba(224,96,112,0.75);
+}
+.slotEditorDelete:hover {
+  background:rgba(224,96,112,0.1);
+  border-color:#e06070;
+  color:#e06070;
+}
+
 /* Post-trip logging */
 .logIntro {
   font-family:var(--font-italic); font-size:0.9rem;

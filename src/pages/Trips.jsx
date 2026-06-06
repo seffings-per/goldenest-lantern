@@ -3,7 +3,7 @@ import { useWorkspace } from '../context/WorkspaceContext';
 import { getTrips, addTrip, updateTrip, deleteTrip, getPlaces, updatePlace } from '../lib/db';
 import { STATUS_META, NEIGHBORHOODS } from '../lib/constants';
 import AccommodationSearch from '../components/trips/AccommodationSearch';
-import { generateItinerary, parseTime } from '../lib/itinerary';
+import { generateItinerary, swapSuggestion, parseTime } from '../lib/itinerary';
 import TripCard from '../components/trips/TripCard';
 import TripForm from '../components/trips/TripForm';
 import styles from './Trips.module.css';
@@ -19,6 +19,7 @@ export default function Trips() {
   const [logState, setLogState] = useState({});
   const [logisticsEdit, setLogisticsEdit]   = useState({});
   const [logisticsDirty, setLogisticsDirty] = useState(false);
+  const [expandedSlot, setExpandedSlot]     = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -67,6 +68,7 @@ export default function Trips() {
       travelTimeToAirport:   viewing.travelTimeToAirport   || '',
     });
     setLogisticsDirty(false);
+    setExpandedSlot(null);
   }, [viewing?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLog = (field, val) => {
@@ -78,6 +80,37 @@ export default function Trips() {
     await updateTrip(workspaceId, viewing.id, logisticsEdit);
     setViewing(v => ({ ...v, ...logisticsEdit }));
     setLogisticsDirty(false);
+  };
+
+  const handleSlotChangePlace = async (dayIdx, origIdx, placeId) => {
+    const place = places.find(p => p.id === placeId);
+    const newItinerary = viewing.itinerary.map((day, di) =>
+      di !== dayIdx ? day : {
+        ...day,
+        slots: day.slots.map((s, si) =>
+          si !== origIdx ? s : { ...s, placeId, placeName: place?.name || '', suggested: false }
+        )
+      }
+    );
+    setViewing(v => ({ ...v, itinerary: newItinerary }));
+    setExpandedSlot(null);
+    await updateTrip(workspaceId, viewing.id, { itinerary: newItinerary });
+  };
+
+  const handleSlotSuggest = async (dayIdx, origIdx) => {
+    const updated = swapSuggestion(places, viewing, dayIdx, origIdx);
+    setViewing(updated);
+    setExpandedSlot(null);
+    await updateTrip(workspaceId, viewing.id, { itinerary: updated.itinerary });
+  };
+
+  const handleSlotRemove = async (dayIdx, origIdx) => {
+    const newItinerary = viewing.itinerary.map((day, di) =>
+      di !== dayIdx ? day : { ...day, slots: day.slots.filter((_, si) => si !== origIdx) }
+    );
+    setViewing(v => ({ ...v, itinerary: newItinerary }));
+    setExpandedSlot(null);
+    await updateTrip(workspaceId, viewing.id, { itinerary: newItinerary });
   };
 
   // Save the post-trip log and optionally update place statuses
@@ -311,35 +344,82 @@ export default function Trips() {
               )}
 
               {/* Itinerary */}
-              {viewing.itinerary?.some(d => d.slots?.length > 0) && (
-                <div className={styles.detailSection}>
-                  <p className={styles.detailSectionLabel}>Itinerary</p>
-                  {viewing.itinerary.filter(d => d.slots?.length > 0).map((day, di) => {
-                    const isFirst = di === 0;
-                    const isLast  = di === viewing.itinerary.filter(d => d.slots?.length > 0).length - 1;
-                    return (
-                    <div key={day.date} className={styles.detailDay}>
-                      <p className={styles.detailDayTitle}>
-                        Day {day.day} · {fmtDate(day.date)}
-                      </p>
-                      {isFirst && viewing.arrivalTime && (
-                        <div className={styles.travelNote}>✈️ Arriving {fmtTime(viewing.arrivalTime)}</div>
-                      )}
-                      {[...day.slots].sort((a, b) => parseTime(a.time) - parseTime(b.time)).map((slot, si) => (
-                        <div key={si} className={`${styles.detailSlot} ${slot.suggested ? styles.detailSlotSuggested : ''}`}>
-                          {slot.time && <span className={styles.slotTime}>{slot.time}</span>}
-                          <span className={styles.slotName}>{placeName(slot) || '—'}</span>
-                          {slot.suggested && <span className={styles.slotSuggestedMark}>✦</span>}
-                          {slot.notes && <span className={styles.slotNotes}>{slot.notes}</span>}
+              {viewing.itinerary?.some(d => d.slots?.length > 0) && (() => {
+                const daysWithSlots = viewing.itinerary
+                  .map((d, i) => ({ d, i }))
+                  .filter(({ d }) => d.slots?.length > 0);
+                const firstIdx = daysWithSlots[0]?.i;
+                const lastIdx  = daysWithSlots[daysWithSlots.length - 1]?.i;
+                return (
+                  <div className={styles.detailSection}>
+                    <p className={styles.detailSectionLabel}>Itinerary</p>
+                    {viewing.itinerary.map((day, dayIdx) => {
+                      if (!day.slots?.length) return null;
+                      const isFirst = dayIdx === firstIdx;
+                      const isLast  = dayIdx === lastIdx;
+                      return (
+                        <div key={day.date} className={styles.detailDay}>
+                          <p className={styles.detailDayTitle}>
+                            Day {day.day} · {fmtDate(day.date)}
+                          </p>
+                          {isFirst && viewing.arrivalTime && (
+                            <div className={styles.travelNote}>✈️ Arriving {fmtTime(viewing.arrivalTime)}</div>
+                          )}
+                          {[...day.slots.map((slot, origIdx) => ({ slot, origIdx }))]
+                            .sort((a, b) => parseTime(a.slot.time) - parseTime(b.slot.time))
+                            .map(({ slot, origIdx }) => {
+                              const isExpanded = expandedSlot?.dayIdx === dayIdx && expandedSlot?.origIdx === origIdx;
+                              return (
+                                <div key={origIdx} className={`${styles.detailSlot} ${slot.suggested ? styles.detailSlotSuggested : ''} ${isExpanded ? styles.detailSlotExpanded : ''}`}>
+                                  {!isExpanded ? (
+                                    <div className={styles.slotClickable}
+                                      onClick={() => setExpandedSlot({ dayIdx, origIdx })}>
+                                      {slot.time && <span className={styles.slotTime}>{slot.time}</span>}
+                                      <span className={styles.slotName}>{placeName(slot) || '—'}</span>
+                                      {slot.suggested && <span className={styles.slotSuggestedMark}>✦</span>}
+                                      {slot.notes && <span className={styles.slotNotes}>{slot.notes}</span>}
+                                      <span className={styles.slotEditHint}>✎</span>
+                                    </div>
+                                  ) : (
+                                    <div className={styles.slotEditor}>
+                                      <div className={styles.slotEditorTop}>
+                                        {slot.time && <span className={styles.slotTime}>{slot.time}</span>}
+                                        <select className={`form-select ${styles.slotEditorSelect}`}
+                                          value={slot.placeId || ''}
+                                          onChange={e => handleSlotChangePlace(dayIdx, origIdx, e.target.value)}>
+                                          <option value="">— Pick a place —</option>
+                                          {[...places].sort((a, b) => a.name.localeCompare(b.name)).map(p => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                          ))}
+                                        </select>
+                                        <button type="button" className={styles.slotEditorCancel}
+                                          onClick={() => setExpandedSlot(null)}>✕</button>
+                                      </div>
+                                      <div className={styles.slotEditorActions}>
+                                        <button type="button" className={styles.slotEditorBtn}
+                                          onClick={() => handleSlotSuggest(dayIdx, origIdx)}>
+                                          🔄 New Suggestion
+                                        </button>
+                                        <button type="button" className={`${styles.slotEditorBtn} ${styles.slotEditorDelete}`}
+                                          onClick={() => handleSlotRemove(dayIdx, origIdx)}>
+                                          🗑 Remove
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })
+                          }
+                          {isLast && viewing.departureTime && (
+                            <div className={styles.travelNote}>✈️ Departing {fmtTime(viewing.departureTime)}</div>
+                          )}
                         </div>
-                      ))}
-                      {isLast && viewing.departureTime && (
-                        <div className={styles.travelNote}>✈️ Departing {fmtTime(viewing.departureTime)}</div>
-                      )}
-                    </div>
-                  );})}
-                </div>
-              )}
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {/* Post-trip log (upcoming trips with itinerary) */}
               {viewing.status !== 'completed' && viewing.itinerary?.some(d => d.slots?.length > 0) && (
