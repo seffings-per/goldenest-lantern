@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useWorkspace } from '../context/WorkspaceContext';
 import { getTrips, addTrip, updateTrip, deleteTrip, getPlaces, updatePlace } from '../lib/db';
 import { STATUS_META } from '../lib/constants';
-import { generateItinerary } from '../lib/itinerary';
+import { generateItinerary, parseTime } from '../lib/itinerary';
 import TripCard from '../components/trips/TripCard';
 import TripForm from '../components/trips/TripForm';
 import styles from './Trips.module.css';
@@ -208,7 +208,7 @@ export default function Trips() {
                       <p className={styles.detailDayTitle}>
                         Day {day.day} · {fmtDate(day.date)}
                       </p>
-                      {day.slots.map((slot, si) => (
+                      {[...day.slots].sort((a, b) => parseTime(a.time) - parseTime(b.time)).map((slot, si) => (
                         <div key={si} className={`${styles.detailSlot} ${slot.suggested ? styles.detailSlotSuggested : ''}`}>
                           {slot.time && <span className={styles.slotTime}>{slot.time}</span>}
                           <span className={styles.slotName}>{placeName(slot) || '—'}</span>
@@ -231,7 +231,7 @@ export default function Trips() {
                   {viewing.itinerary.filter(d => d.slots?.length > 0).map((day, di) => (
                     <div key={day.date} className={styles.logDay}>
                       <p className={styles.logDayTitle}>Day {day.day} · {fmtDate(day.date)}</p>
-                      {day.slots.map((slot, si) => {
+                      {[...day.slots].sort((a, b) => parseTime(a.time) - parseTime(b.time)).map((slot, si) => {
                         const key = `${di}-${si}`;
                         const ls  = logState[key] || {};
                         return (

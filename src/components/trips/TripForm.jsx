@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TRIP_VIBES } from '../../lib/constants';
-import { generateItinerary, swapSuggestion } from '../../lib/itinerary';
+import { generateItinerary, swapSuggestion, parseTime } from '../../lib/itinerary';
 import styles from './TripForm.module.css';
 
 const EMPTY_TRIP = {
@@ -190,7 +190,9 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
                     <span className={styles.dayDate}>{fmtDate(day.date)}</span>
                   </div>
 
-                  {day.slots.map((slot, si) => (
+                  {[...day.slots.map((slot, si) => ({ slot, si }))]
+                    .sort((a, b) => parseTime(a.slot.time) - parseTime(b.slot.time))
+                    .map(({ slot, si }) => (
                     <div key={si} className={`${styles.slot} ${slot.suggested ? styles.slotSuggested : ''}`}>
                       {slot.suggested && (
                         <div className={styles.suggestedBadge}>✦ suggested — swap or keep</div>

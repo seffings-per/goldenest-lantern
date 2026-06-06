@@ -1,6 +1,19 @@
 // Itinerary suggestion engine
 // Fills empty day slots based on category variety and neighborhood grouping.
 
+// Convert a time string like "7:00 PM" or "11:00 AM" to minutes since midnight for sorting.
+export function parseTime(timeStr) {
+  if (!timeStr) return Infinity;
+  const match = timeStr.trim().toUpperCase().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/);
+  if (!match) return Infinity;
+  let h = parseInt(match[1], 10);
+  const m = parseInt(match[2] || '0', 10);
+  const ampm = match[3];
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  return h * 60 + m;
+}
+
 const TIME_SLOTS = [
   { time: '11:00 AM', cats: ['brunch', 'coffee'] },
   { time: '2:00 PM',  cats: ['art', 'shopping', 'outdoors', 'spiritual', 'cheap'] },
@@ -54,7 +67,9 @@ export function generateItinerary(allPlaces, trip) {
       pool = pool.filter(p => p.id !== s.placeId);
     });
 
-    return { ...day, slots: [...manualSlots, ...suggestions] };
+    const merged = [...manualSlots, ...suggestions]
+      .sort((a, b) => parseTime(a.time) - parseTime(b.time));
+    return { ...day, slots: merged };
   });
 }
 
