@@ -163,6 +163,11 @@
 }
 .slotName { color:var(--text-main); }
 .slotNotes { font-style:italic; font-size:0.8rem; color:var(--text-dim); }
+.detailSlotSuggested { opacity:0.82; }
+.slotSuggestedMark {
+  font-size:0.6rem; color:var(--gold); opacity:0.6;
+  flex-shrink:0; margin-left:auto;
+}
 
 /* Post-trip logging */
 .logIntro {

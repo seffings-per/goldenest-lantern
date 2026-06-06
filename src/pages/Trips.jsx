@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useWorkspace } from '../context/WorkspaceContext';
 import { getTrips, addTrip, updateTrip, deleteTrip, getPlaces, updatePlace } from '../lib/db';
 import { STATUS_META } from '../lib/constants';
+import { generateItinerary } from '../lib/itinerary';
 import TripCard from '../components/trips/TripCard';
 import TripForm from '../components/trips/TripForm';
 import styles from './Trips.module.css';
@@ -43,6 +44,13 @@ export default function Trips() {
     await updateTrip(workspaceId, viewing.id, { status: 'completed' });
     await load();
     setViewing(trips.find(t => t.id === viewing.id) || null);
+  };
+
+  const handleSuggestDetail = async () => {
+    const newItinerary = generateItinerary(places, viewing);
+    setViewing(v => ({ ...v, itinerary: newItinerary }));
+    await updateTrip(workspaceId, viewing.id, { itinerary: newItinerary });
+    load();
   };
 
   // Save the post-trip log and optionally update place statuses
@@ -201,9 +209,10 @@ export default function Trips() {
                         Day {day.day} · {fmtDate(day.date)}
                       </p>
                       {day.slots.map((slot, si) => (
-                        <div key={si} className={styles.detailSlot}>
+                        <div key={si} className={`${styles.detailSlot} ${slot.suggested ? styles.detailSlotSuggested : ''}`}>
                           {slot.time && <span className={styles.slotTime}>{slot.time}</span>}
                           <span className={styles.slotName}>{placeName(slot) || '—'}</span>
+                          {slot.suggested && <span className={styles.slotSuggestedMark}>✦</span>}
                           {slot.notes && <span className={styles.slotNotes}>{slot.notes}</span>}
                         </div>
                       ))}
@@ -291,6 +300,11 @@ export default function Trips() {
                 ✕ Delete
               </button>
               <div style={{ display:'flex', gap:'0.5rem' }}>
+                {viewing.status !== 'completed' && viewing.itinerary?.length > 0 && places.length > 0 && (
+                  <button className="btn btn-outline" onClick={handleSuggestDetail}>
+                    ✨ Suggest
+                  </button>
+                )}
                 {viewing.status !== 'completed' && (
                   <button className="btn btn-outline" onClick={handleMarkComplete}>
                     ⭐ Mark Complete
