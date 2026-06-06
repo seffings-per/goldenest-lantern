@@ -43,6 +43,8 @@ export function generateItinerary(allPlaces, trip) {
     arrivalTime = '',
     departureTime = '',
     accommodationHood = '',
+    travelTimeFromAirport = 0,
+    travelTimeToAirport = 0,
   } = trip;
   const dayCount = itinerary.length;
 
@@ -66,9 +68,13 @@ export function generateItinerary(allPlaces, trip) {
     const isFirstDay = dayIdx === 0;
     const isLastDay  = dayIdx === dayCount - 1;
 
-    // Time window for suggestions on this day
-    const minMins = (isFirstDay && arrivalTime)   ? parseTime(arrivalTime)   : 0;
-    const maxMins = (isLastDay  && departureTime)  ? parseTime(departureTime) : Infinity;
+    // Time window for suggestions — add travel buffer from/to airport
+    const minMins = (isFirstDay && arrivalTime)
+      ? parseTime(arrivalTime) + Number(travelTimeFromAirport || 0)
+      : 0;
+    const maxMins = (isLastDay && departureTime)
+      ? parseTime(departureTime) - Number(travelTimeToAirport || 0)
+      : Infinity;
 
     // Only use time slots that fall strictly inside the window
     const allowedTs = TIME_SLOTS.filter(ts => {

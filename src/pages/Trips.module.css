@@ -130,6 +130,36 @@
   opacity:0.7; padding:0.2rem 0; margin-bottom:0.2rem;
 }
 
+/* ── Logistics inline form ── */
+.logisticsForm { display:flex; flex-direction:column; gap:0.6rem; }
+
+.logRow2 {
+  display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;
+}
+
+.logField { display:flex; flex-direction:column; gap:0.25rem; }
+
+.logLabel {
+  font-family:var(--font-heading); font-size:0.62rem;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--text-dim);
+}
+
+.logInput {
+  font-size:0.85rem !important;
+  padding:0.4rem 0.6rem !important;
+}
+
+.logMinRow { display:flex; align-items:center; gap:0.4rem; }
+.logMinInput { flex:1; }
+.logMinLabel {
+  font-family:var(--font-heading); font-size:0.7rem;
+  color:var(--text-dim); white-space:nowrap;
+}
+
+@media (max-width:480px) {
+  .logRow2 { grid-template-columns:1fr; }
+}
+
 .closeBtn {
   background:transparent; border:none; color:var(--text-dim);
   font-size:1rem; cursor:pointer; padding:0.25rem 0.5rem;

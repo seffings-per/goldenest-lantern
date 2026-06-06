@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWorkspace } from '../context/WorkspaceContext';
 import { getTrips, addTrip, updateTrip, deleteTrip, getPlaces, updatePlace } from '../lib/db';
-import { STATUS_META } from '../lib/constants';
+import { STATUS_META, NEIGHBORHOODS } from '../lib/constants';
 import { generateItinerary, parseTime } from '../lib/itinerary';
 import TripCard from '../components/trips/TripCard';
 import TripForm from '../components/trips/TripForm';
@@ -15,8 +15,9 @@ export default function Trips() {
   const [showForm, setShowForm] = useState(false);
   const [editing,  setEditing]  = useState(null);
   const [viewing,  setViewing]  = useState(null);
-  // post-trip log state: { slotKey: { visited, rating, notes } }
   const [logState, setLogState] = useState({});
+  const [logisticsEdit, setLogisticsEdit]   = useState({});
+  const [logisticsDirty, setLogisticsDirty] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -51,6 +52,31 @@ export default function Trips() {
     setViewing(v => ({ ...v, itinerary: newItinerary }));
     await updateTrip(workspaceId, viewing.id, { itinerary: newItinerary });
     load();
+  };
+
+  // Sync logistics form when a different trip is opened
+  useEffect(() => {
+    if (!viewing) return;
+    setLogisticsEdit({
+      accommodation:         viewing.accommodation         || '',
+      accommodationHood:     viewing.accommodationHood     || '',
+      arrivalTime:           viewing.arrivalTime           || '',
+      departureTime:         viewing.departureTime         || '',
+      travelTimeFromAirport: viewing.travelTimeFromAirport || '',
+      travelTimeToAirport:   viewing.travelTimeToAirport   || '',
+    });
+    setLogisticsDirty(false);
+  }, [viewing?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const setLog = (field, val) => {
+    setLogisticsEdit(l => ({ ...l, [field]: val }));
+    setLogisticsDirty(true);
+  };
+
+  const handleSaveLogistics = async () => {
+    await updateTrip(workspaceId, viewing.id, logisticsEdit);
+    setViewing(v => ({ ...v, ...logisticsEdit }));
+    setLogisticsDirty(false);
   };
 
   // Save the post-trip log and optionally update place statuses
@@ -193,24 +219,82 @@ export default function Trips() {
                   </p>
                 )}
                 {viewing.vibe && <p className={styles.detailVibe}>✦ {viewing.vibe}</p>}
-                {viewing.accommodation && (
-                  <p className={styles.detailAccommodation}>
-                    🏨 {viewing.accommodation}
-                    {viewing.accommodationHood && ` · ${viewing.accommodationHood}`}
-                  </p>
-                )}
-                {(viewing.arrivalTime || viewing.departureTime) && (
-                  <p className={styles.detailTravelTimes}>
-                    {viewing.arrivalTime && `→ Arriving ${fmtTime(viewing.arrivalTime)}`}
-                    {viewing.arrivalTime && viewing.departureTime && ' · '}
-                    {viewing.departureTime && `← Departing ${fmtTime(viewing.departureTime)}`}
-                  </p>
-                )}
               </div>
               <button className={styles.closeBtn} onClick={() => setViewing(null)}>✕</button>
             </div>
 
             <div className={styles.detailBody}>
+
+              {/* ── Logistics (always editable) ── */}
+              <div className={styles.detailSection}>
+                <p className={styles.detailSectionLabel}>Logistics</p>
+                <div className={styles.logisticsForm}>
+
+                  <div className={styles.logRow2}>
+                    <div className={styles.logField}>
+                      <label className={styles.logLabel}>🏨 Staying At</label>
+                      <input className={`form-input ${styles.logInput}`}
+                        value={logisticsEdit.accommodation || ''}
+                        onChange={e => setLog('accommodation', e.target.value)}
+                        placeholder="Hotel, Airbnb, friend's place…" />
+                    </div>
+                    <div className={styles.logField}>
+                      <label className={styles.logLabel}>Neighborhood</label>
+                      <select className={`form-select ${styles.logInput}`}
+                        value={logisticsEdit.accommodationHood || ''}
+                        onChange={e => setLog('accommodationHood', e.target.value)}>
+                        <option value="">— Select —</option>
+                        {NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className={styles.logRow2}>
+                    <div className={styles.logField}>
+                      <label className={styles.logLabel}>→ Arrival Time</label>
+                      <input className={`form-input ${styles.logInput}`} type="time"
+                        value={logisticsEdit.arrivalTime || ''}
+                        onChange={e => setLog('arrivalTime', e.target.value)} />
+                    </div>
+                    <div className={styles.logField}>
+                      <label className={styles.logLabel}>Travel from Airport</label>
+                      <div className={styles.logMinRow}>
+                        <input className={`form-input ${styles.logMinInput}`} type="number" min="0" step="5"
+                          value={logisticsEdit.travelTimeFromAirport || ''}
+                          onChange={e => setLog('travelTimeFromAirport', e.target.value)}
+                          placeholder="0" />
+                        <span className={styles.logMinLabel}>min</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.logRow2}>
+                    <div className={styles.logField}>
+                      <label className={styles.logLabel}>← Departure Time</label>
+                      <input className={`form-input ${styles.logInput}`} type="time"
+                        value={logisticsEdit.departureTime || ''}
+                        onChange={e => setLog('departureTime', e.target.value)} />
+                    </div>
+                    <div className={styles.logField}>
+                      <label className={styles.logLabel}>Travel to Airport</label>
+                      <div className={styles.logMinRow}>
+                        <input className={`form-input ${styles.logMinInput}`} type="number" min="0" step="5"
+                          value={logisticsEdit.travelTimeToAirport || ''}
+                          onChange={e => setLog('travelTimeToAirport', e.target.value)}
+                          placeholder="0" />
+                        <span className={styles.logMinLabel}>min</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {logisticsDirty && (
+                    <button className="btn btn-gold" style={{ width:'100%', marginTop:'0.5rem' }}
+                      onClick={handleSaveLogistics}>
+                      ✦ Save Logistics
+                    </button>
+                  )}
+                </div>
+              </div>
 
               {/* Notes */}
               {viewing.notes && (

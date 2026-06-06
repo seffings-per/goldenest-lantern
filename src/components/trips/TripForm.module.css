@@ -64,6 +64,19 @@
 
 .row2 { display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; }
 
+.travelRow {
+  display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:0.75rem;
+}
+
+.minRow {
+  display:flex; align-items:center; gap:0.5rem;
+}
+.minRow .form-input { flex:1; }
+.minLabel {
+  font-family:var(--font-heading); font-size:0.72rem;
+  color:var(--text-dim); letter-spacing:0.05em; white-space:nowrap;
+}
+
 .field { display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.75rem; }
 .field:last-child { margin-bottom:0; }
 

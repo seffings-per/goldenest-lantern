@@ -9,6 +9,8 @@ const EMPTY_TRIP = {
   endDate: '',
   arrivalTime: '',
   departureTime: '',
+  travelTimeFromAirport: '',
+  travelTimeToAirport: '',
   accommodation: '',
   accommodationHood: '',
   vibe: '',
@@ -155,18 +157,38 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
                   onChange={e => set('endDate', e.target.value)} />
               </Field>
             </div>
-            {(form.startDate || form.endDate) && (
-              <div className={styles.row2}>
-                <Field label="Arrival Time">
+            {(form.startDate || form.endDate) && (<>
+              <div className={styles.travelRow}>
+                <Field label="→ Arrival Time">
                   <input className="form-input" type="time" value={form.arrivalTime}
                     onChange={e => set('arrivalTime', e.target.value)} />
                 </Field>
-                <Field label="Departure Time">
+                <Field label="Travel from Airport">
+                  <div className={styles.minRow}>
+                    <input className="form-input" type="number" min="0" step="5"
+                      value={form.travelTimeFromAirport}
+                      onChange={e => set('travelTimeFromAirport', e.target.value)}
+                      placeholder="0" />
+                    <span className={styles.minLabel}>min</span>
+                  </div>
+                </Field>
+              </div>
+              <div className={styles.travelRow}>
+                <Field label="← Departure Time">
                   <input className="form-input" type="time" value={form.departureTime}
                     onChange={e => set('departureTime', e.target.value)} />
                 </Field>
+                <Field label="Travel to Airport">
+                  <div className={styles.minRow}>
+                    <input className="form-input" type="number" min="0" step="5"
+                      value={form.travelTimeToAirport}
+                      onChange={e => set('travelTimeToAirport', e.target.value)}
+                      placeholder="0" />
+                    <span className={styles.minLabel}>min</span>
+                  </div>
+                </Field>
               </div>
-            )}
+            </>)}
             <div className={styles.row2}>
               <Field label="Staying At">
                 <input className="form-input" value={form.accommodation}
