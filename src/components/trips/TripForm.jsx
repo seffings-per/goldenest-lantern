@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TRIP_VIBES } from '../../lib/constants';
+import { TRIP_VIBES, NEIGHBORHOODS } from '../../lib/constants';
 import { generateItinerary, swapSuggestion, parseTime } from '../../lib/itinerary';
 import styles from './TripForm.module.css';
 
@@ -7,6 +7,10 @@ const EMPTY_TRIP = {
   label: '',
   startDate: '',
   endDate: '',
+  arrivalTime: '',
+  departureTime: '',
+  accommodation: '',
+  accommodationHood: '',
   vibe: '',
   notes: '',
   itinerary: [],
@@ -149,6 +153,32 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
               <Field label="End Date">
                 <input className="form-input" type="date" value={form.endDate}
                   onChange={e => set('endDate', e.target.value)} />
+              </Field>
+            </div>
+            {(form.startDate || form.endDate) && (
+              <div className={styles.row2}>
+                <Field label="Arrival Time">
+                  <input className="form-input" type="time" value={form.arrivalTime}
+                    onChange={e => set('arrivalTime', e.target.value)} />
+                </Field>
+                <Field label="Departure Time">
+                  <input className="form-input" type="time" value={form.departureTime}
+                    onChange={e => set('departureTime', e.target.value)} />
+                </Field>
+              </div>
+            )}
+            <div className={styles.row2}>
+              <Field label="Staying At">
+                <input className="form-input" value={form.accommodation}
+                  onChange={e => set('accommodation', e.target.value)}
+                  placeholder="Hotel, Airbnb, friend's place…" />
+              </Field>
+              <Field label="Where It's At">
+                <select className="form-select" value={form.accommodationHood}
+                  onChange={e => set('accommodationHood', e.target.value)}>
+                  <option value="">— Neighborhood —</option>
+                  {NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
+                </select>
               </Field>
             </div>
           </Sec>

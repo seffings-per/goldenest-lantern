@@ -99,6 +99,14 @@ export default function Trips() {
     ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })
     : '';
 
+  const fmtTime = (t) => {
+    if (!t) return '';
+    const [h, mi] = t.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(mi).padStart(2, '0')} ${ampm}`;
+  };
+
   const placeName = (slot) =>
     slot.placeId && slot.placeId !== '__custom__'
       ? (places.find(p => p.id === slot.placeId)?.name || slot.placeName)
@@ -185,6 +193,19 @@ export default function Trips() {
                   </p>
                 )}
                 {viewing.vibe && <p className={styles.detailVibe}>✦ {viewing.vibe}</p>}
+                {viewing.accommodation && (
+                  <p className={styles.detailAccommodation}>
+                    🏨 {viewing.accommodation}
+                    {viewing.accommodationHood && ` · ${viewing.accommodationHood}`}
+                  </p>
+                )}
+                {(viewing.arrivalTime || viewing.departureTime) && (
+                  <p className={styles.detailTravelTimes}>
+                    {viewing.arrivalTime && `→ Arriving ${fmtTime(viewing.arrivalTime)}`}
+                    {viewing.arrivalTime && viewing.departureTime && ' · '}
+                    {viewing.departureTime && `← Departing ${fmtTime(viewing.departureTime)}`}
+                  </p>
+                )}
               </div>
               <button className={styles.closeBtn} onClick={() => setViewing(null)}>✕</button>
             </div>
@@ -203,11 +224,17 @@ export default function Trips() {
               {viewing.itinerary?.some(d => d.slots?.length > 0) && (
                 <div className={styles.detailSection}>
                   <p className={styles.detailSectionLabel}>Itinerary</p>
-                  {viewing.itinerary.filter(d => d.slots?.length > 0).map(day => (
+                  {viewing.itinerary.filter(d => d.slots?.length > 0).map((day, di) => {
+                    const isFirst = di === 0;
+                    const isLast  = di === viewing.itinerary.filter(d => d.slots?.length > 0).length - 1;
+                    return (
                     <div key={day.date} className={styles.detailDay}>
                       <p className={styles.detailDayTitle}>
                         Day {day.day} · {fmtDate(day.date)}
                       </p>
+                      {isFirst && viewing.arrivalTime && (
+                        <div className={styles.travelNote}>✈️ Arriving {fmtTime(viewing.arrivalTime)}</div>
+                      )}
                       {[...day.slots].sort((a, b) => parseTime(a.time) - parseTime(b.time)).map((slot, si) => (
                         <div key={si} className={`${styles.detailSlot} ${slot.suggested ? styles.detailSlotSuggested : ''}`}>
                           {slot.time && <span className={styles.slotTime}>{slot.time}</span>}
@@ -216,8 +243,11 @@ export default function Trips() {
                           {slot.notes && <span className={styles.slotNotes}>{slot.notes}</span>}
                         </div>
                       ))}
+                      {isLast && viewing.departureTime && (
+                        <div className={styles.travelNote}>✈️ Departing {fmtTime(viewing.departureTime)}</div>
+                      )}
                     </div>
-                  ))}
+                  );})}
                 </div>
               )}
 

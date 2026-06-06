@@ -1,7 +1,9 @@
 // Itinerary suggestion engine
 // Fills empty day slots based on category variety and neighborhood grouping.
+// Respects arrival time on Day 1 and departure time on the last day.
 
-// Convert a time string like "7:00 PM" or "11:00 AM" to minutes since midnight for sorting.
+// Convert a time string to minutes since midnight.
+// Handles both 12h ("3:00 PM") and 24h ("15:00") formats.
 export function parseTime(timeStr) {
   if (!timeStr) return Infinity;
   const match = timeStr.trim().toUpperCase().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/);
@@ -33,11 +35,18 @@ const PRIORITY = { must_go: 10, want_to_try: 9, tried_liked: 5, loved: 4, meh: 1
 
 // Returns a new itinerary array.
 // Manual slots (suggested !== true) are always preserved.
-// Previously suggested slots are replaced with fresh picks.
+// Previously suggested slots are cleared and replaced with fresh picks.
+// Respects arrivalTime on Day 1 and departureTime on last day.
 export function generateItinerary(allPlaces, trip) {
-  const { itinerary = [] } = trip;
+  const {
+    itinerary = [],
+    arrivalTime = '',
+    departureTime = '',
+    accommodationHood = '',
+  } = trip;
+  const dayCount = itinerary.length;
 
-  // IDs that are manually locked in
+  // IDs that are manually locked in (non-suggested slots)
   const manualIds = new Set();
   itinerary.forEach(day =>
     day.slots.forEach(s => {
@@ -46,7 +55,7 @@ export function generateItinerary(allPlaces, trip) {
     })
   );
 
-  // Sorted candidate pool
+  // Sorted candidate pool — exclude never_again and manually placed
   let pool = allPlaces
     .filter(p => p.status !== 'never_again' && !manualIds.has(p.id))
     .sort((a, b) => (PRIORITY[b.status] || 0) - (PRIORITY[a.status] || 0));
@@ -54,13 +63,33 @@ export function generateItinerary(allPlaces, trip) {
   const usedIds = new Set([...manualIds]);
 
   return itinerary.map((day, dayIdx) => {
+    const isFirstDay = dayIdx === 0;
+    const isLastDay  = dayIdx === dayCount - 1;
+
+    // Time window for suggestions on this day
+    const minMins = (isFirstDay && arrivalTime)   ? parseTime(arrivalTime)   : 0;
+    const maxMins = (isLastDay  && departureTime)  ? parseTime(departureTime) : Infinity;
+
+    // Only use time slots that fall strictly inside the window
+    const allowedTs = TIME_SLOTS.filter(ts => {
+      const t = parseTime(ts.time);
+      return t > minMins && t < maxMins;
+    });
+
+    // Keep manual (non-suggested) slots regardless of time window
     const manualSlots = day.slots.filter(s => !s.suggested);
     const toFill = Math.max(0, 4 - manualSlots.length);
 
-    if (toFill === 0 || pool.length === 0) return { ...day, slots: manualSlots };
+    if (toFill === 0 || pool.length === 0 || allowedTs.length === 0) {
+      return { ...day, slots: manualSlots.sort((a, b) => parseTime(a.time) - parseTime(b.time)) };
+    }
 
-    const preferredHoods = HOOD_GROUPS[dayIdx % HOOD_GROUPS.length];
-    const suggestions    = pickForDay(pool, toFill, preferredHoods, usedIds);
+    // On Day 1, prefer accommodation neighborhood; otherwise rotate through HOOD_GROUPS
+    const preferredHoods = (isFirstDay && accommodationHood)
+      ? [accommodationHood, ...HOOD_GROUPS[0].filter(h => h !== accommodationHood)]
+      : HOOD_GROUPS[dayIdx % HOOD_GROUPS.length];
+
+    const suggestions = pickForDay(pool, toFill, preferredHoods, usedIds, allowedTs);
 
     suggestions.forEach(s => {
       usedIds.add(s.placeId);
@@ -79,7 +108,7 @@ export function swapSuggestion(allPlaces, trip, dayIdx, slotIdx) {
   const currentSlot = itinerary[dayIdx]?.slots[slotIdx];
   if (!currentSlot) return trip;
 
-  // IDs currently scheduled (excluding the slot being swapped)
+  // All currently scheduled IDs except the one being swapped
   const occupied = new Set();
   itinerary.forEach((day, di) =>
     day.slots.forEach((s, si) => {
@@ -118,12 +147,12 @@ export function swapSuggestion(allPlaces, trip, dayIdx, slotIdx) {
   };
 }
 
-// Pick up to `count` places for a day from the pool.
-function pickForDay(pool, count, preferredHoods, usedIds) {
+// Pick up to `count` places from the pool using the allowed time slots.
+function pickForDay(pool, count, preferredHoods, usedIds, allowedTs) {
   const picked = new Set();
   const results = [];
 
-  for (const ts of TIME_SLOTS) {
+  for (const ts of allowedTs) {
     if (results.length >= count) break;
     const catSet = new Set(ts.cats);
 
