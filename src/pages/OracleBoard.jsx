@@ -95,11 +95,11 @@ export default function OracleBoard() {
       <div className={styles.hero}>
         <div className={styles.heroText}>
           <h1 className={styles.heroTitle}>The Goldenest Lantern</h1>
-          <p className={styles.heroSub}>
-            {isEmpty
-              ? 'Your oracle awaits its first light. Add places, people, and trips to begin.'
-              : `${places.length} places · ${people.length} people · ${trips.length} trips`}
-          </p>
+          {isEmpty && (
+            <p className={styles.heroSub}>
+              Your oracle awaits its first light. Add places, people, and trips to begin.
+            </p>
+          )}
         </div>
         <LanternIcon className={styles.heroLantern} />
       </div>
