@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TRIP_VIBES, NEIGHBORHOODS } from '../../lib/constants';
 import { generateItinerary, swapSuggestion, parseTime } from '../../lib/itinerary';
+import AccommodationSearch from './AccommodationSearch';
 import styles from './TripForm.module.css';
 
 const EMPTY_TRIP = {
@@ -189,6 +190,10 @@ export default function TripForm({ initial = {}, places = [], onSave, onClose })
                 </Field>
               </div>
             </>)}
+            <AccommodationSearch onSelect={data => {
+              if (data.name)         set('accommodation',     data.name);
+              if (data.neighborhood) set('accommodationHood', data.neighborhood);
+            }} />
             <div className={styles.row2}>
               <Field label="Staying At">
                 <input className="form-input" value={form.accommodation}

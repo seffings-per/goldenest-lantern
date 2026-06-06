@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useWorkspace } from '../context/WorkspaceContext';
 import { getTrips, addTrip, updateTrip, deleteTrip, getPlaces, updatePlace } from '../lib/db';
 import { STATUS_META, NEIGHBORHOODS } from '../lib/constants';
+import AccommodationSearch from '../components/trips/AccommodationSearch';
 import { generateItinerary, parseTime } from '../lib/itinerary';
 import TripCard from '../components/trips/TripCard';
 import TripForm from '../components/trips/TripForm';
@@ -229,6 +230,11 @@ export default function Trips() {
               <div className={styles.detailSection}>
                 <p className={styles.detailSectionLabel}>Logistics</p>
                 <div className={styles.logisticsForm}>
+
+                  <AccommodationSearch onSelect={data => {
+                    if (data.name)         setLog('accommodation',     data.name);
+                    if (data.neighborhood) setLog('accommodationHood', data.neighborhood);
+                  }} />
 
                   <div className={styles.logRow2}>
                     <div className={styles.logField}>
