@@ -11,7 +11,7 @@ import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC5hKWwPwCqdphalrP38HGoeY-4MpWrp4s",
-  authDomain: "goldenest-lantern.firebaseapp.com",
+  authDomain: "goldenest-lantern.web.app",
   projectId: "goldenest-lantern",
   storageBucket: "goldenest-lantern.firebasestorage.app",
   messagingSenderId: "940944947839",
